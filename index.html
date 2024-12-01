@@ -8,10 +8,10 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
     <style>
         canvas {
-            max-width: 100%; /* Menyesuaikan dengan layar */
-            height: auto; /* Proporsi tetap */
+            max-width: 100%;
+            height: auto;
             display: block;
-            margin: 0 auto; /* Tengah secara horizontal */
+            margin: 0 auto;
         }
 
         button {
@@ -19,7 +19,7 @@
         }
 
         button:hover {
-            transform: scale(1.05); /* Zoom in saat hover */
+            transform: scale(1.05);
         }
 
         footer {
@@ -28,7 +28,7 @@
         }
 
         footer a {
-            color: #ba68c8; /* Warna biru Tailwind */
+            color: #ba68c8;
             text-decoration: none;
             font-weight: bold;
         }
@@ -37,7 +37,6 @@
             text-decoration: underline;
         }
 
-        /* Flexbox untuk memastikan footer berada di paling bawah */
         html, body {
             height: 100%;
         }
@@ -52,28 +51,20 @@
             flex-grow: 1;
         }
 
-        /* Styling untuk spinner */
-        .spinner {
-            border: 4px solid transparent;
-            border-top: 4px solid #3498db;
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        /* Menyembunyikan konten loading */
-        .hidden {
-            display: none;
+        .theme-hangat {
+            background-color: #f7eedf;
+            color: #7b6349;
         }
     </style>
 </head>
 <body class="bg-purple-50 min-h-screen flex flex-col items-center justify-center">
+
+    <!-- Tombol Ganti Tema -->
+    <div class="fixed top-4 right-4 space-x-2">
+        <button id="theme-normal" class="px-4 py-2 bg-gray-300 text-gray-800 rounded-lg hover:bg-gray-400">Normal</button>
+        <button id="theme-dark" class="px-4 py-2 bg-gray-800 text-white rounded-lg hover:bg-gray-700">Dark</button>
+        <button id="theme-hangat" class="px-4 py-2 bg-yellow-300 text-yellow-900 rounded-lg hover:bg-yellow-400">Hangat</button>
+    </div>
 
     <!-- Landing Page -->
     <div id="landing" class="text-center space-y-6">
@@ -81,8 +72,11 @@
         <p class="text-gray-600 text-lg max-w-md mx-auto">
             Baca dan koreksi karya Saya ini, Terkadang Dakwah tak melulu di atas mimbar 😊
         </p>
-        <button id="start-reading" class="px-6 py-3 bg-purple-300 text-white rounded-lg hover:bg-blue-700 transition">
-            Mulai Membaca
+        <button id="start-reading" class="px-6 py-3 bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 text-white rounded-lg shadow-lg flex items-center justify-center space-x-2">
+            <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l-7-7 7-7m8 14l-7-7 7-7" />
+            </svg>
+            <span>Mulai Membaca</span>
         </button>
     </div>
 
@@ -96,12 +90,8 @@
     <div id="viewer" class="hidden flex flex-col items-center space-y-4 w-full px-4">
         <canvas id="pdf-render" class="border border-gray-300 shadow-lg"></canvas>
         <div class="flex space-x-4">
-            <button id="prev" class="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700">
-                Sebelumnya
-            </button>
-            <button id="next" class="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700">
-                Berikutnya
-            </button>
+            <button id="prev" class="px-4 py-2 bg-gradient-to-r from-teal-400 via-blue-400 to-indigo-400 text-white rounded-lg">Sebelumnya</button>
+            <button id="next" class="px-4 py-2 bg-gradient-to-r from-teal-400 via-blue-400 to-indigo-400 text-white rounded-lg">Berikutnya</button>
         </div>
     </div>
     
@@ -113,71 +103,34 @@
         </p>
     </footer>
 
-    <!-- Script -->
     <script>
         const landing = document.getElementById('landing');
         const viewer = document.getElementById('viewer');
         const loading = document.getElementById('loading');
-        const canvas = document.getElementById('pdf-render');
-        const ctx = canvas.getContext('2d');
-        let pdfDoc = null;
-        let pageNum = 1;
-
-        // Event ketika klik "Mulai Membaca"
+        const themeButtons = {
+            normal: document.getElementById('theme-normal'),
+            dark: document.getElementById('theme-dark'),
+            hangat: document.getElementById('theme-hangat')
+        };
+        
         document.getElementById('start-reading').addEventListener('click', () => {
             landing.classList.add('hidden');
-            loading.classList.remove('hidden'); // Tampilkan spinner loading
+            loading.classList.remove('hidden');
 
-            // Delay 5 detik untuk animasi loading sebelum mulai memuat PDF
             setTimeout(() => {
-                loading.classList.add('hidden'); // Sembunyikan spinner
-                viewer.classList.remove('hidden'); // Tampilkan viewer PDF
-                loadPdf('./pdf/buku.pdf'); // Pastikan file PDF ada di lokasi ini
-            }, 5000); // 5 detik delay
+                loading.classList.add('hidden');
+                viewer.classList.remove('hidden');
+                loadPdf('./pdf/buku.pdf');
+            }, 5000);
         });
 
-        // Fungsi untuk memuat PDF
-        function loadPdf(url) {
-            pdfjsLib.getDocument(url).promise.then(doc => {
-                pdfDoc = doc;
-                renderPage(pageNum);
-            }).catch(error => {
-                console.error('Error loading PDF:', error);
-                alert('Gagal memuat PDF. Pastikan file tersedia.');
-            });
+        function applyTheme(theme) {
+            document.body.className = theme;
         }
 
-        // Fungsi untuk merender halaman PDF
-        function renderPage(num) {
-            pdfDoc.getPage(num).then(page => {
-                const viewport = page.getViewport({ scale: 1.5 }); // Skala PDF
-                canvas.height = viewport.height;
-                canvas.width = viewport.width;
-
-                page.render({
-                    canvasContext: ctx,
-                    viewport: viewport
-                });
-            }).catch(error => {
-                console.error('Error rendering page:', error);
-            });
-        }
-
-        // Navigasi Sebelumnya
-        document.getElementById('prev').addEventListener('click', () => {
-            if (pageNum > 1) {
-                pageNum--;
-                renderPage(pageNum);
-            }
-        });
-
-        // Navigasi Berikutnya
-        document.getElementById('next').addEventListener('click', () => {
-            if (pageNum < pdfDoc.numPages) {
-                pageNum++;
-                renderPage(pageNum);
-            }
-        });
+        themeButtons.normal.addEventListener('click', () => applyTheme('bg-purple-50'));
+        themeButtons.dark.addEventListener('click', () => applyTheme('bg-gray-900 text-white'));
+        themeButtons.hangat.addEventListener('click', () => applyTheme('theme-hangat'));
     </script>
 </body>
 </html>
