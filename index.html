@@ -21,6 +21,24 @@
             background-color: #fef7e7;
             color: #4a3527;
         }
+
+        .spinner {
+            border: 4px solid transparent;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
     </style>
 </head>
 <body class="theme-normal min-h-screen flex flex-col items-center justify-center">
@@ -61,22 +79,22 @@
         </div>
     </div>
 
-    <footer>
+    <footer class="mt-6">
         <p>Dibuat dengan ❤️ oleh 
-            <a href="https://instagram.com/fhamzidanpulungan_" target="_blank">
+            <a href="https://instagram.com/fhamzidanpulungan_" target="_blank" class="text-blue-500 hover:underline">
                 FAHRUL HAMZIDAN PULUNGAN
             </a>
         </p>
     </footer>
 
     <script>
+        // Tombol tema
         const themeButtons = {
             normal: document.getElementById('theme-normal'),
             dark: document.getElementById('theme-dark'),
             hangat: document.getElementById('theme-hangat')
         };
 
-        // Fungsi untuk mengganti tema
         function applyTheme(theme) {
             document.body.className = theme + ' min-h-screen flex flex-col items-center justify-center';
         }
@@ -85,20 +103,63 @@
         themeButtons.dark.addEventListener('click', () => applyTheme('theme-dark'));
         themeButtons.hangat.addEventListener('click', () => applyTheme('theme-hangat'));
 
-        // Navigasi antara landing dan viewer
+        // Logika PDF Viewer
         const landing = document.getElementById('landing');
         const viewer = document.getElementById('viewer');
         const loading = document.getElementById('loading');
+        const canvas = document.getElementById('pdf-render');
+        const ctx = canvas.getContext('2d');
+        let pdfDoc = null;
+        let pageNum = 1;
 
         document.getElementById('start-reading').addEventListener('click', () => {
             landing.classList.add('hidden');
             loading.classList.remove('hidden');
 
-            // Simulasi delay loading sebelum menunjukkan viewer
             setTimeout(() => {
                 loading.classList.add('hidden');
                 viewer.classList.remove('hidden');
+                loadPdf('./pdf/buku.pdf');
             }, 3000);
+        });
+
+        function loadPdf(url) {
+            pdfjsLib.getDocument(url).promise.then(doc => {
+                pdfDoc = doc;
+                renderPage(pageNum);
+            }).catch(error => {
+                console.error('Error loading PDF:', error);
+                alert('Gagal memuat PDF. Pastikan file tersedia.');
+            });
+        }
+
+        function renderPage(num) {
+            pdfDoc.getPage(num).then(page => {
+                const viewport = page.getViewport({ scale: 1.5 });
+                canvas.height = viewport.height;
+                canvas.width = viewport.width;
+
+                page.render({
+                    canvasContext: ctx,
+                    viewport: viewport
+                });
+            }).catch(error => {
+                console.error('Error rendering page:', error);
+            });
+        }
+
+        document.getElementById('prev').addEventListener('click', () => {
+            if (pageNum > 1) {
+                pageNum--;
+                renderPage(pageNum);
+            }
+        });
+
+        document.getElementById('next').addEventListener('click', () => {
+            if (pageNum < pdfDoc.numPages) {
+                pageNum++;
+                renderPage(pageNum);
+            }
         });
     </script>
 </body>
