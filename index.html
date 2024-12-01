@@ -26,8 +26,8 @@
             border: 4px solid transparent;
             border-top: 4px solid #3498db;
             border-radius: 50%;
-            width: 50px;
-            height: 50px;
+            width: 40px;
+            height: 40px;
             animation: spin 1s linear infinite;
         }
 
@@ -41,23 +41,23 @@
         }
     </style>
 </head>
-<body class="theme-normal min-h-screen flex flex-col items-center justify-center">
+<body class="theme-normal min-h-screen flex flex-col items-center justify-center px-4">
 
     <!-- Tombol Ganti Tema -->
-    <div class="fixed top-4 right-4 space-x-2">
-        <button id="theme-normal" class="px-4 py-2 bg-gray-300 text-gray-800 rounded-lg hover:bg-gray-400">Normal</button>
-        <button id="theme-dark" class="px-4 py-2 bg-gray-800 text-white rounded-lg hover:bg-gray-700">Dark</button>
-        <button id="theme-hangat" class="px-4 py-2 bg-yellow-300 text-yellow-900 rounded-lg hover:bg-yellow-400">Hangat</button>
+    <div class="fixed top-4 right-4 space-x-2 flex">
+        <button id="theme-normal" class="px-3 py-1 text-xs bg-gray-300 text-gray-800 rounded-lg hover:bg-gray-400">Normal</button>
+        <button id="theme-dark" class="px-3 py-1 text-xs bg-gray-800 text-white rounded-lg hover:bg-gray-700">Dark</button>
+        <button id="theme-hangat" class="px-3 py-1 text-xs bg-yellow-300 text-yellow-900 rounded-lg hover:bg-yellow-400">Hangat</button>
     </div>
 
     <!-- Landing Page -->
-    <div id="landing" class="text-center space-y-6">
-        <h1 class="text-4xl font-bold">Cinta Itu Suci, Jangan Nodai Sebelum Akad</h1>
-        <p class="text-lg max-w-md mx-auto">
+    <div id="landing" class="text-center space-y-4 max-w-full">
+        <h1 class="text-2xl font-bold">Cinta Itu Suci, Jangan Nodai Sebelum Akad</h1>
+        <p class="text-sm max-w-xs mx-auto">
             Baca dan koreksi karya Saya ini, Terkadang Dakwah tak melulu di atas mimbar 😊
         </p>
-        <button id="start-reading" class="px-6 py-3 bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 text-white rounded-lg shadow-lg flex items-center justify-center space-x-2">
-            <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <button id="start-reading" class="w-full max-w-xs px-4 py-2 bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 text-white rounded-lg shadow-lg flex items-center justify-center space-x-2">
+            <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l-7-7 7-7m8 14l-7-7 7-7" />
             </svg>
             <span>Mulai Membaca</span>
@@ -67,19 +67,19 @@
     <!-- Loading Spinner -->
     <div id="loading" class="hidden flex flex-col items-center space-y-4">
         <div class="spinner"></div>
-        <p class="text-lg">Sebentar Buku Sedang Dimuat...</p>
+        <p class="text-sm">Sebentar Buku Sedang Dimuat...</p>
     </div>
 
     <!-- PDF Viewer -->
-    <div id="viewer" class="hidden text-center space-y-6">
-        <canvas id="pdf-render" class="border border-gray-300 shadow-lg"></canvas>
-        <div class="flex justify-center space-x-4">
-            <button id="prev" class="px-4 py-2 bg-gradient-to-r from-teal-400 via-blue-400 to-indigo-400 text-white rounded-lg">Sebelumnya</button>
-            <button id="next" class="px-4 py-2 bg-gradient-to-r from-teal-400 via-blue-400 to-indigo-400 text-white rounded-lg">Berikutnya</button>
+    <div id="viewer" class="hidden text-center space-y-4 w-full px-4">
+        <canvas id="pdf-render" class="w-full max-w-xs border border-gray-300 shadow-lg"></canvas>
+        <div class="flex justify-between space-x-4">
+            <button id="prev" class="w-1/2 px-2 py-1 text-xs bg-gradient-to-r from-teal-400 via-blue-400 to-indigo-400 text-white rounded-lg">Sebelumnya</button>
+            <button id="next" class="w-1/2 px-2 py-1 text-xs bg-gradient-to-r from-teal-400 via-blue-400 to-indigo-400 text-white rounded-lg">Berikutnya</button>
         </div>
     </div>
 
-    <footer class="mt-6">
+    <footer class="mt-4 text-xs text-center">
         <p>Dibuat dengan ❤️ oleh 
             <a href="https://instagram.com/fhamzidanpulungan_" target="_blank" class="text-blue-500 hover:underline">
                 FAHRUL HAMZIDAN PULUNGAN
@@ -96,7 +96,7 @@
         };
 
         function applyTheme(theme) {
-            document.body.className = theme + ' min-h-screen flex flex-col items-center justify-center';
+            document.body.className = theme + ' min-h-screen flex flex-col items-center justify-center px-4';
         }
 
         themeButtons.normal.addEventListener('click', () => applyTheme('theme-normal'));
@@ -135,7 +135,7 @@
 
         function renderPage(num) {
             pdfDoc.getPage(num).then(page => {
-                const viewport = page.getViewport({ scale: 1.5 });
+                const viewport = page.getViewport({ scale: 1 });
                 canvas.height = viewport.height;
                 canvas.width = viewport.width;
 
