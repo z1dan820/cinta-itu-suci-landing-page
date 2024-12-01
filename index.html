@@ -46,6 +46,12 @@
         </button>
     </div>
 
+    <!-- Loading Spinner -->
+    <div id="loading" class="hidden flex flex-col items-center space-y-4">
+        <div class="spinner"></div>
+        <p class="text-lg">Sebentar Buku Sedang Dimuat...</p>
+    </div>
+
     <!-- PDF Viewer -->
     <div id="viewer" class="hidden text-center space-y-6">
         <canvas id="pdf-render" class="border border-gray-300 shadow-lg"></canvas>
@@ -78,6 +84,22 @@
         themeButtons.normal.addEventListener('click', () => applyTheme('theme-normal'));
         themeButtons.dark.addEventListener('click', () => applyTheme('theme-dark'));
         themeButtons.hangat.addEventListener('click', () => applyTheme('theme-hangat'));
+
+        // Navigasi antara landing dan viewer
+        const landing = document.getElementById('landing');
+        const viewer = document.getElementById('viewer');
+        const loading = document.getElementById('loading');
+
+        document.getElementById('start-reading').addEventListener('click', () => {
+            landing.classList.add('hidden');
+            loading.classList.remove('hidden');
+
+            // Simulasi delay loading sebelum menunjukkan viewer
+            setTimeout(() => {
+                loading.classList.add('hidden');
+                viewer.classList.remove('hidden');
+            }, 3000);
+        });
     </script>
 </body>
 </html>
