@@ -5,13 +5,51 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Baca Buku - Cinta Itu Suci</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://mozilla.github.io/pdf.js/build/pdf.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
     <style>
         canvas {
-            max-width: 100%;
-            height: auto;
+            max-width: 100%; /* Menyesuaikan dengan layar */
+            height: auto; /* Proporsi tetap */
             display: block;
-            margin: 0 auto;
+            margin: 0 auto; /* Tengah secara horizontal */
+        }
+
+        button {
+            transition: all 0.3s ease;
+        }
+
+        button:hover {
+            transform: scale(1.05); /* Zoom in saat hover */
+        }
+
+        footer {
+            margin-top: 2rem;
+            text-align: center;
+        }
+
+        footer a {
+            color: #2563eb; /* Warna biru Tailwind */
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Flexbox untuk memastikan footer berada di paling bawah */
+        html, body {
+            height: 100%;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        #content {
+            flex-grow: 1;
         }
     </style>
 </head>
@@ -20,6 +58,9 @@
     <!-- Landing Page -->
     <div id="landing" class="text-center space-y-6">
         <h1 class="text-4xl font-bold text-gray-800">Cinta Itu Suci, Jangan Nodai Sebelum Akad</h1>
+        <p class="text-gray-600 text-lg max-w-md mx-auto">
+            Baca karya terbaik Saya, sekarang tersedia secara gratis!
+        </p>
         <button id="start-reading" class="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
             Mulai Membaca
         </button>
@@ -37,7 +78,15 @@
             </button>
         </div>
     </div>
+    <footer>
+        <p>Dibuat dengan ❤️ oleh 
+            <a href="https://instagram.com/fhamzidanpulungan_" target="_blank">
+                FAHRUL HAMZIDAN PULUNGAN
+            </a>
+        </p>
+    </footer>
 
+    <!-- Script -->
     <script>
         const landing = document.getElementById('landing');
         const viewer = document.getElementById('viewer');
@@ -46,12 +95,14 @@
         let pdfDoc = null;
         let pageNum = 1;
 
+        // Event ketika klik "Mulai Membaca"
         document.getElementById('start-reading').addEventListener('click', () => {
             landing.classList.add('hidden');
             viewer.classList.remove('hidden');
-            loadPdf('https://drive.google.com/uc?export=download&id=1SMCv3imhjCydM1LbYwv4IsIZXxv5Rkc1');
+            loadPdf('./pdf/buku.pdf'); // Pastikan file PDF ada di lokasi ini
         });
 
+        // Fungsi untuk memuat PDF
         function loadPdf(url) {
             pdfjsLib.getDocument(url).promise.then(doc => {
                 pdfDoc = doc;
@@ -62,9 +113,10 @@
             });
         }
 
+        // Fungsi untuk merender halaman PDF
         function renderPage(num) {
             pdfDoc.getPage(num).then(page => {
-                const viewport = page.getViewport({ scale: 1.5 });
+                const viewport = page.getViewport({ scale: 1.5 }); // Skala PDF
                 canvas.height = viewport.height;
                 canvas.width = viewport.width;
 
@@ -77,6 +129,7 @@
             });
         }
 
+        // Navigasi Sebelumnya
         document.getElementById('prev').addEventListener('click', () => {
             if (pageNum > 1) {
                 pageNum--;
@@ -84,6 +137,7 @@
             }
         });
 
+        // Navigasi Berikutnya
         document.getElementById('next').addEventListener('click', () => {
             if (pageNum < pdfDoc.numPages) {
                 pageNum++;
