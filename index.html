@@ -51,6 +51,26 @@
         #content {
             flex-grow: 1;
         }
+
+        /* Styling untuk spinner */
+        .spinner {
+            border: 4px solid transparent;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Menyembunyikan konten loading */
+        .hidden {
+            display: none;
+        }
     </style>
 </head>
 <body class="bg-gray-100 min-h-screen flex flex-col items-center justify-center">
@@ -66,6 +86,12 @@
         </button>
     </div>
 
+    <!-- Loading Spinner -->
+    <div id="loading" class="hidden flex flex-col items-center space-y-4">
+        <div class="spinner"></div>
+        <p class="text-lg text-gray-600">Sedang Memuat PDF...</p>
+    </div>
+
     <!-- PDF Viewer -->
     <div id="viewer" class="hidden flex flex-col items-center space-y-4 w-full px-4">
         <canvas id="pdf-render" class="border border-gray-300 shadow-lg"></canvas>
@@ -78,6 +104,7 @@
             </button>
         </div>
     </div>
+    
     <footer>
         <p>Dibuat dengan ❤️ oleh 
             <a href="https://instagram.com/fhamzidanpulungan_" target="_blank">
@@ -90,6 +117,7 @@
     <script>
         const landing = document.getElementById('landing');
         const viewer = document.getElementById('viewer');
+        const loading = document.getElementById('loading');
         const canvas = document.getElementById('pdf-render');
         const ctx = canvas.getContext('2d');
         let pdfDoc = null;
@@ -98,8 +126,14 @@
         // Event ketika klik "Mulai Membaca"
         document.getElementById('start-reading').addEventListener('click', () => {
             landing.classList.add('hidden');
-            viewer.classList.remove('hidden');
-            loadPdf('./pdf/buku.pdf'); // Pastikan file PDF ada di lokasi ini
+            loading.classList.remove('hidden'); // Tampilkan spinner loading
+
+            // Delay 5 detik untuk animasi loading sebelum mulai memuat PDF
+            setTimeout(() => {
+                loading.classList.add('hidden'); // Sembunyikan spinner
+                viewer.classList.remove('hidden'); // Tampilkan viewer PDF
+                loadPdf('./pdf/buku.pdf'); // Pastikan file PDF ada di lokasi ini
+            }, 5000); // 5 detik delay
         });
 
         // Fungsi untuk memuat PDF
